@@ -64,6 +64,7 @@ extract_packages(['pip', 'setuptools', 'wheel'])
 saved_sys_path = sys.path
 sys.path = sys.path[:]
 import pip
+from pip._internal import main as _pip_main
 sys.path = saved_sys_path
 
 import setuptools
@@ -75,9 +76,9 @@ def pip_main(argv):
     # https://github.com/pypa/get-pip/blob/430ba37776ae2ad89/template.py#L164-L168
     cert_path = os.path.join(tempfile.mkdtemp(), "cacert.pem")
     with open(cert_path, "wb") as cert:
-      cert.write(pkgutil.get_data("pip._vendor.requests", "cacert.pem"))
+      cert.write(pkgutil.get_data("pip._vendor.certifi", "cacert.pem"))
     argv = ["--disable-pip-version-check", "--cert", cert_path] + argv
-    return pip.main(argv)
+    return _pip_main(argv)
 
 from rules_python.whl import Wheel
 
